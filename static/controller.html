@@ -1,0 +1,51 @@
+<h1>controller</h1>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"
+  integrity="sha256-OgiHfllOBEOiWQ2OcBsDncRG2k7QBW9Rs1dB7MH2N2s="
+  crossorigin="anonymous"
+></script>
+
+<div class="buttons">
+  <button id="left">&lt;</button>
+  <button id="right">&gt;</button>
+</div>
+
+<script>
+  let direction = 0
+  var socket = io("/controllers")
+
+  function setleft() {
+    direction = -1
+    send()
+  }
+  function setright() {
+    direction = 1
+    send()
+  }
+  function setnull() {
+    direction = 0
+    send()
+  }
+
+  function send() {
+    socket.emit("direction", direction)
+  }
+
+  document.querySelector("#left").addEventListener("mousedown", setleft)
+  document.querySelector("#left").addEventListener("mouseup", setnull)
+  document.querySelector("#right").addEventListener("mousedown", setright)
+  document.querySelector("#right").addEventListener("mouseup", setnull)
+</script>
+
+<style>
+  .buttons {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .buttons button {
+    flex: 1;
+  }
+</style>
