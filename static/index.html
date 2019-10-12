@@ -26,6 +26,7 @@
 
   function preload() {
     game.load.image("bullet", "assets/bullet.png")
+    game.load.image("banana", "assets/banana.png")
     game.load.image("enemyBullet", "assets/enemy-bullet.png")
     game.load.spritesheet("invader", "assets/invader32x32x4.png", 32, 32)
     game.load.image("ship", "assets/player.png")
@@ -166,7 +167,7 @@
     //  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
     var tween = game.add
       .tween(aliens)
-      .to({ x: 200 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true)
+      .to({ x: 200 }, 4000, Phaser.Easing.Linear.None, true, 0, 1000, true)
 
     //  When the tween loops it calls descend
     tween.onRepeat.add(descend, this)
@@ -325,6 +326,14 @@
             if (c.length == 1) bullet.tint = 0xffffff
             if (c.length > 1) bullet.tint = 0xff0000
             if (c.length > 2) bullet.tint = 0xfff000
+
+            if (c.length > 3) {
+              bullet.loadTexture("banana")
+              bullet.tint = 0xffffff
+              bullet.scale.setTo(1, 1)
+            } else {
+              bullet.loadTexture("bullet")
+            }
           }
         })
       }
