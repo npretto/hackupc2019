@@ -69,7 +69,7 @@
     bullets = game.add.group()
     bullets.enableBody = true
     bullets.physicsBodyType = Phaser.Physics.ARCADE
-    bullets.createMultiple(100, "bullet")
+    bullets.createMultiple(300, "bullet")
     bullets.setAll("anchor.x", 0.5)
     bullets.setAll("anchor.y", 1)
     bullets.setAll("outOfBoundsKill", true)
@@ -172,6 +172,7 @@
         alien.animations.add("fly", [0, 1, 2, 3], 20, true)
         alien.play("fly")
         alien.body.moves = false
+        alien.life = game_phase + 1
       }
     }
 
@@ -240,14 +241,18 @@
       fire()
 
       //  Run collision
-      game.physics.arcade.overlap(bullets, aliens, collisionHandler, null, this)
-      game.physics.arcade.overlap(
-        bullets,
-        boss_group,
-        collisionHandlerBoss,
-        null,
-        this
-      )
+      try{
+        game.physics.arcade.overlap(bullets, aliens, collisionHandler, null, this)
+        game.physics.arcade.overlap(
+          bullets,
+          boss_group,
+          collisionHandlerBoss,
+          null,
+          this
+      )}catch(err){
+        
+      }
+      
     }
   }
 
@@ -262,7 +267,8 @@
   function collisionHandler(bullet, alien) {
     //  When a bullet hits an alien we kill them both
     bullet.kill()
-    alien.kill()
+    alien.life -= 1
+    
 
     //  Increase the score
     score += 20
@@ -272,6 +278,10 @@
     var explosion = explosions.getFirstExists(false)
     explosion.reset(alien.body.x, alien.body.y)
     explosion.play("kaboom", 30, false, true)
+
+    if (alien.life <= 0){
+
+      alien.kill()
 
     if (aliens.countLiving() == 0) {
       score += 1000
@@ -286,12 +296,17 @@
 
       game_phase += 1
 
-      if (game_phase == 5) {
+      if (game_phase%5 == 0) {
         createFinalBoss()
       } else {
+        bullets.killAll()
         createAliens()
       }
     }
+
+    }
+
+    
   }
 
   function collisionHandlerBoss(bullet, boss) {
@@ -321,8 +336,10 @@
       //the "click to restart" handler
       //game.input.onTap.addOnce(restart, this)
 
-      game_phase = 0
-      bossLife = 50
+      bossLife = 50*game_phase/2
+      game_phase += 1
+      createAliens()
+      
     }
   }
 
