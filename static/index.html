@@ -266,8 +266,8 @@
 
   function collisionHandler(bullet, alien) {
     //  When a bullet hits an alien we kill them both
+    alien.life -= bullet.penetration
     bullet.kill()
-    alien.life -= 1
     
 
     //  Increase the score
@@ -311,9 +311,9 @@
 
   function collisionHandlerBoss(bullet, boss) {
     //  When a bullet hits an alien we kill them both
+    bossLife -= bullet.penetration
     bullet.kill()
-
-    bossLife -= 1
+    console.log(bossLife)
 
     //  Increase the score
     score += 20
@@ -324,7 +324,7 @@
     explosion.reset(boss.body.x, boss.body.y + 80)
     explosion.play("kaboom", 30, false, true)
 
-    if (bossLife == 0) {
+    if (bossLife <= 0) {
       boss.kill()
       score += 10000
       scoreText.text = scoreString + score
@@ -429,16 +429,26 @@
             bullet.body.velocity.y = -400
             bulletTime = game.time.now + 200
             bullet.scale.setTo(c.length, c.length)
-            if (c.length == 1) bullet.tint = 0xffffff
-            if (c.length > 1) bullet.tint = 0xff0000
-            if (c.length > 2) bullet.tint = 0xfff000
-
+            if (c.length == 1) {
+              bullet.tint = 0xffffff
+              bullet.penetration = c.length
+            }
+            if (c.length > 1) {
+              bullet.tint = 0xff0000
+              bullet.penetration = c.length*(1+1/(Object.keys(players).length))
+            }
+            if (c.length > 2) {
+              bullet.tint = 0xfff000
+              bullet.penetration = c.length*(1+1/(Object.keys(players).length))
+            }
             if (c.length > 3) {
               bullet.loadTexture("banana")
               bullet.tint = 0xffffff
               bullet.scale.setTo(1, 1)
+              bullet.penetration = c.length*(1+1/(Object.keys(players).length))
             } else {
               bullet.loadTexture("bullet")
+              bullet.penetration = 1
             }
           }
         })
