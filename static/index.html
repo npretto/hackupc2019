@@ -31,7 +31,7 @@
     game.load.spritesheet("invader", "assets/invader32x32x4.png", 32, 32)
     game.load.image("ship", "assets/plane.png")
     game.load.spritesheet("kaboom", "assets/explode.png", 128, 128)
-    game.load.image("starfield", "assets/starfield.png")
+    game.load.image("clouds", "assets/clouds.png")
     game.load.image("background", "assets/games/starstruck/background2.png")
 
     game.stage.disableVisibilityChange = true
@@ -44,7 +44,7 @@
   var cursors
   var fireButton
   var explosions
-  var starfield
+  var clouds
   var score = 0
   var scoreString = ""
   var scoreText
@@ -57,8 +57,8 @@
   function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE)
 
-    //  The scrolling starfield background
-    starfield = game.add.tileSprite(0, 0, 800, 600, "starfield")
+    //  The scrolling clouds background
+    clouds = game.add.tileSprite(0, 0, 800, 600, "clouds")
 
     //  Our bullet group
     bullets = game.add.group()
@@ -185,7 +185,7 @@
 
   function update() {
     //  Scroll the background
-    starfield.tilePosition.y += 2
+    clouds.tilePosition.y += 2
 
     if (true) {
       //  Reset the player, then check for movement keys
