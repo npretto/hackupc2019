@@ -151,6 +151,7 @@
     this.socket.on("player-disconnect", id => {
       players[id].destroy()
       delete players[id]
+
       if (Object.keys(players).length == 0) {
         restart()
       }
@@ -217,7 +218,9 @@
   }
 
   function descend() {
-    aliens.y += 10
+    if (Object.keys(players).length > 0) {
+      aliens.y += 10
+    }
   }
 
   function update() {
