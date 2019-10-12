@@ -1,16 +1,12 @@
-const app = require("express")()
+const express = require("express")
+const app = express()
 const http = require("http").createServer(app)
 const io = require("socket.io")(http)
+const path = require('path')
 // const Game = require("./src/game.js").Game
 // const game = new Game()
 
-app.get("/", (req, res) => res.sendFile(__dirname + "/static/index.html"))
-app.get("/assets/player.jpg", (req, res) =>
-  res.sendFile(__dirname + "/static/assets/player.jpg")
-)
-app.get("/controller", (req, res) =>
-  res.sendFile(__dirname + "/static/controller.html")
-)
+app.use(express.static(path.join(__dirname, 'static')))
 
 const screenSocket = io.of("/screen")
 
