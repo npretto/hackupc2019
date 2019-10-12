@@ -29,6 +29,7 @@
     game.load.image("banana", "assets/banana.png")
     game.load.image("enemyBullet", "assets/enemy-bullet.png")
     game.load.spritesheet("invader", "assets/invader32x32x4.png", 32, 32)
+    game.load.image("banana_boss", "assets/banana.png")
     game.load.image("ship", "assets/plane.png")
     game.load.spritesheet("kaboom", "assets/explode.png", 128, 128)
     game.load.image("clouds", "assets/clouds.png")
@@ -39,6 +40,7 @@
 
   var players = {}
   var aliens
+  var boss_group
   var bullets
   var bulletTime = 0
   var cursors
@@ -53,6 +55,8 @@
   var firingTimer = 0
   var stateText
   var livingEnemies = []
+  var bossLife = 50
+  var game_phase = 0
 
   function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE)
@@ -90,6 +94,10 @@
     aliens = game.add.group()
     aliens.enableBody = true
     aliens.physicsBodyType = Phaser.Physics.ARCADE
+
+    boss_group = game.add.group()
+    boss_group.enableBody = true
+    boss_group.physicsBodyType = Phaser.Physics.ARCADE
 
     createAliens()
 
@@ -173,10 +181,71 @@
     tween.onRepeat.add(descend, this)
   }
 
+  function createAliens2() {
+    for (var y = 0; y < 4; y++) {
+      for (var x = 0; x < 10; x++) {
+        var alien = aliens.create(x * 48, y * 50, "invader")
+        alien.anchor.setTo(0.5, 0.5)
+        alien.animations.add("fly", [0, 1, 2, 3], 20, true)
+        alien.play("fly")
+        alien.body.moves = false
+      }
+    }
+
+    aliens.x = 100
+    aliens.y = 50
+
+    //  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
+    var tween = game.add
+      .tween(aliens)
+      .to({ x: 200 }, 4000, Phaser.Easing.Linear.None, true, 0, 1000, true)
+
+    //  When the tween loops it calls descend
+    tween.onRepeat.add(descend, this)
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  function createFinalBoss() {
+
+    var boss = boss_group.create(100, 50, "banana_boss")
+    boss.anchor.setTo(0.5, 0.5)
+    //alien.animations.add("fly", [0, 1], 20, true)
+    //alien.play("fly")
+    boss.body.moves = false
+
+    boss_group.x = 0
+    boss_group.y = 50
+
+    //  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
+    var tween = game.add
+      .tween(boss_group)
+      .to({ x: 600 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true)
+
+    //  When the tween loops it calls descend
+    tween.onRepeat.add(descendBoss, this)
+  }
+
   function setupInvader(invader) {
     invader.anchor.x = 0.5
     invader.anchor.y = 0.5
     invader.animations.add("kaboom")
+  }
+
+  function descendBoss() {
+    boss_group.y += 30
   }
 
   function descend() {
@@ -200,6 +269,7 @@
 
       //  Run collision
       game.physics.arcade.overlap(bullets, aliens, collisionHandler, null, this)
+      game.physics.arcade.overlap(bullets, boss_group, collisionHandlerBoss, null, this)
     }
   }
 
@@ -208,6 +278,7 @@
     // {
     //     game.debug.body(aliens.children[i]);
     // }
+    //game.debug.body(boss_group.children[0]);
   }
 
   function collisionHandler(bullet, alien) {
@@ -229,11 +300,52 @@
       scoreText.text = scoreString + score
 
       enemyBullets.callAll("kill", this)
-      stateText.text = " You Won, \n Click to restart"
-      stateText.visible = true
+      //stateText.text = " You Won, \n Click to restart"
+      //stateText.visible = true
 
       //the "click to restart" handler
-      game.input.onTap.addOnce(restart, this)
+      //game.input.onTap.addOnce(restart, this)
+
+      game_phase += 1
+
+      if (game_phase == 2){
+        createFinalBoss()
+      } else {
+        createAliens2()
+      }
+
+    }
+  }
+
+  function collisionHandlerBoss(bullet, boss) {
+    //  When a bullet hits an alien we kill them both
+    bullet.kill()
+
+    bossLife -= 1
+
+    //  Increase the score
+    score += 20
+    scoreText.text = scoreString + score
+
+    //  And create an explosion :)
+    var explosion = explosions.getFirstExists(false)
+    explosion.reset(boss.body.x, boss.body.y + 80)
+    explosion.play("kaboom", 30, false, true)
+
+    if (bossLife == 0) {
+      boss.kill()
+      score += 10000
+      scoreText.text = scoreString + score
+
+      enemyBullets.callAll("kill", this)
+      //stateText.text = " You Won, \n Click to restart"
+      //stateText.visible = true
+
+      //the "click to restart" handler
+      //game.input.onTap.addOnce(restart, this)
+
+      game_phase = 0
+      bossLife = 50
     }
   }
 
