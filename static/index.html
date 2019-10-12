@@ -151,6 +151,9 @@
     this.socket.on("player-disconnect", id => {
       players[id].destroy()
       delete players[id]
+      if (Object.keys(players).length == 0) {
+        restart()
+      }
     })
 
     this.socket.on("direction", ({ id, direction }) => {
@@ -179,7 +182,7 @@
       .to({ x: 200 }, 4000, Phaser.Easing.Linear.None, true, 0, 1000, true)
 
     //  When the tween loops it calls descend
-    if (game_phase > 0){
+    if (game_phase > 0) {
       tween.onRepeat.add(descend, this)
     }
   }
@@ -436,8 +439,10 @@
     aliens.removeAll()
     createAliens()
 
+    bullets.killAll()
+
     //revives the player
-    player.revive()
+    // player.revive()
     //hides the text
     stateText.visible = false
   }
