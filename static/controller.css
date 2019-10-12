@@ -1,0 +1,51 @@
+.buttons {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  flex-direction: row;
+}
+
+.buttons button {
+  flex: 1;
+}
+
+.real_buttons_wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+.ctl_btn {
+  width: 50%;
+  height: 100%;
+  background-size: contain;
+  background-position: center;
+  background-image: url("assets/controller_arrow_white.png");
+  background-repeat: no-repeat;
+  opacity: 0.6;
+}
+
+.ctl_btn:active {
+  opacity: 1
+}
+
+.left {
+  -webkit-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+
+.right {
+
+
+}
+
+.buttons {
+  display: none !important;
+}
+
+body {
+  background-color: orange;
+}
