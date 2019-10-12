@@ -169,7 +169,7 @@
       .to({ x: 200 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true)
 
     //  When the tween loops it calls descend
-    tween.onLoop.add(descend, this)
+    tween.onRepeat.add(descend, this)
   }
 
   function setupInvader(invader) {
@@ -195,9 +195,7 @@
       } else if (cursors.right.isDown) {
         //player.body.velocity.x = 200
       }
-      if (game.time.now > firingTimer) {
-        fire()
-      }
+      fire()
 
       //  Run collision
       game.physics.arcade.overlap(bullets, aliens, collisionHandler, null, this)
@@ -296,14 +294,40 @@
     // }
 
     if (game.time.now > bulletTime) {
-      Object.values(players).forEach(p => {
-        bullet = bullets.getFirstExists(false)
-        if (bullet) {
-          bullet.reset(p.x, p.y + 8)
-          bullet.body.velocity.y = -400
-          bulletTime = game.time.now + 200
+      const threshold = 30
+      const thresholdMax = 40
+
+      let sorted = Object.values(players).sort((a, b) => a.x - b.x)
+
+      let clusters = []
+      let cluster = []
+      while (sorted.length > 0) {
+        const cluster = [sorted.shift()]
+
+        while (sorted.length > 0 && sorted[0].x - cluster[0].x < thresholdMax) {
+          cluster.push(sorted.shift())
         }
-      })
+
+        clusters.push(cluster)
+
+        clusters.forEach(c => {
+          const center =
+            c.reduce((acc, p) => {
+              return acc + p.x
+            }, 0) / c.length
+
+          bullet = bullets.getFirstExists(false)
+          if (bullet) {
+            bullet.reset(center, clusters[0][0].y + 8)
+            bullet.body.velocity.y = -400
+            bulletTime = game.time.now + 200
+            bullet.scale.setTo(c.length, c.length)
+            if (c.length == 1) bullet.tint = 0xffffff
+            if (c.length > 1) bullet.tint = 0xff0000
+            if (c.length > 2) bullet.tint = 0xfff000
+          }
+        })
+      }
     }
   }
 
