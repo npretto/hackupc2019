@@ -32,5 +32,10 @@ http.listen(3000, function() {
     const data = game.update()
     // console.log(data)
     screenSocket.emit("update", data)
-  }, 1000 / 30)
+  }, 1000 / Game.FPS)
+
+  setInterval(() => {
+    const id = game.addEnemy()
+    screenSocket.emit("add-enemy", id)
+  }, 1000)
 })

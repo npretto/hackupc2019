@@ -1,6 +1,11 @@
 class Game {
+  static FPS = 30
+  static ENEMY_SPEED = 20 * (1 / Game.FPS)
+  static PLAYER_SPEED = 80 * (1 / Game.FPS)
+
   constructor() {
     this.players = {}
+    this.enemies = {}
   }
 
   addPlayer() {
@@ -21,10 +26,21 @@ class Game {
   update() {
     Object.entries(this.players).forEach(([id, p]) => {
       console.log(p, p.direction)
-      p.x += p.direction
+      console.log(Game.PLAYER_SPEED)
+      p.x += p.direction * Game.PLAYER_SPEED
     })
 
-    return { players: this.players }
+    Object.entries(this.enemies).forEach(([id, e]) => {
+      e.y += Game.ENEMY_SPEED
+    })
+
+    return { players: this.players, enemies: this.enemies }
+  }
+
+  addEnemy() {
+    const id = uuidv4()
+    this.enemies[id] = { x: 20 + Math.random() * (800 - 40), y: 0 }
+    return id
   }
 }
 

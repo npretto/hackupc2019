@@ -15,8 +15,9 @@
   const socket = io("/screen")
 
   const players = {}
+  const enemies = {}
 
-  let app = new PIXI.Application({ width: 800, height: 460 })
+  let app = new PIXI.Application({ width: 800, height: 600 })
   document.body.appendChild(app.view)
 
   socket.on("player-connection", id => {
@@ -27,7 +28,7 @@
     rect.lineStyle(1, 0xff0000)
     rect.drawRect(0, 0, 20, 20)
     rect.endFill()
-    rect.y = 100
+    rect.y = 550
     rect.x = -100
 
     players[id] = rect
@@ -41,10 +42,31 @@
     delete players[id]
   })
 
+  socket.on("add-enemy", id => {
+    var rect = new PIXI.Graphics()
+    rect.beginFill(0xff0000)
+    rect.lineStyle(1, 0xff0000)
+    rect.drawRect(0, 0, 20, 20)
+    rect.endFill()
+    rect.y = 0
+    rect.x = 0
+
+    enemies[id] = rect
+
+    app.stage.addChild(rect)
+  })
+
   socket.on("update", data => {
     Object.entries(data.players).forEach(([id, p]) => {
       try {
         players[id].x = p.x
+      } catch (ex) {}
+    })
+
+    Object.entries(data.enemies).forEach(([id, e]) => {
+      try {
+        enemies[id].x = e.x
+        enemies[id].y = e.y
       } catch (ex) {}
     })
   })
