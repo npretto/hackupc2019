@@ -30,7 +30,7 @@
     game.load.image("enemyBullet", "assets/enemy-bullet.png")
     game.load.spritesheet("invader", "assets/invader32x32x4.png", 32, 32)
     game.load.image("banana_boss", "assets/banana.png")
-    game.load.image("ship", "assets/plane.png")
+    game.load.image("ship", "assets/airplane.jpg")
     game.load.spritesheet("kaboom", "assets/explode.png", 128, 128)
     game.load.image("clouds", "assets/clouds.png")
     game.load.image("background", "assets/games/starstruck/background2.png")
@@ -146,6 +146,7 @@
       players[id] = playersGroup.create(100 + Math.random() * 500, 500, "ship")
       players[id].anchor.setTo(0.5, 0.5)
       players[id].tint = color
+      players[id].scale.setTo(0.5, 0.5)
       game.physics.enable(players[id], Phaser.Physics.ARCADE)
     })
 
