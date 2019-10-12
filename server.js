@@ -1,10 +1,13 @@
 const app = require("express")()
 const http = require("http").createServer(app)
 const io = require("socket.io")(http)
-const Game = require("./src/game.js").Game
-const game = new Game()
+// const Game = require("./src/game.js").Game
+// const game = new Game()
 
 app.get("/", (req, res) => res.sendFile(__dirname + "/static/index.html"))
+app.get("/assets/player.jpg", (req, res) =>
+  res.sendFile(__dirname + "/static/assets/player.jpg")
+)
 app.get("/controller", (req, res) =>
   res.sendFile(__dirname + "/static/controller.html")
 )
@@ -12,30 +15,28 @@ app.get("/controller", (req, res) =>
 const screenSocket = io.of("/screen")
 
 io.of("/controllers").on("connection", function(socket) {
-  const id = game.addPlayer()
+  const id = uuidv4()
   screenSocket.emit("player-connection", id)
+  console.log("controller connected")
+  socket.on("direction", direction => {
+    console.log("controller direction")
 
-  socket.on("direction", msg => {
-    game.setPlayerMov(id, msg)
+    screenSocket.emit("direction", { id, direction })
   })
   socket.on("disconnect", socket => {
-    game.removePlayer(id)
     screenSocket.emit("player-disconnect", id)
-
-    console.log(`player ${id} disconnected`)
   })
 })
 
 http.listen(3000, function() {
   console.log("listening on *:3000")
-  setInterval(() => {
-    const data = game.update()
-    // console.log(data)
-    screenSocket.emit("update", data)
-  }, 1000 / Game.FPS)
-
-  setInterval(() => {
-    const id = game.addEnemy()
-    screenSocket.emit("add-enemy", id)
-  }, 1000)
 })
+
+// https://stackoverflow.com/a/2117523/2670415
+function uuidv4() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+    var r = (Math.random() * 16) | 0,
+      v = c == "x" ? r : (r & 0x3) | 0x8
+    return v.toString(16)
+  })
+}
