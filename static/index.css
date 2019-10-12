@@ -1,3 +1,17 @@
 body {
   margin: 0 !important;
+  display: flex;
+  flex-direction: row;
+}
+
+#phaser-container {
+  flex: 1;
+}
+
+#white-bar {
+  width: 150px;
+}
+
+.text-container {
+  padding: 5px;
 }
