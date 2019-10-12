@@ -9,25 +9,28 @@ app.get("/controller", (req, res) =>
   res.sendFile(__dirname + "/static/controller.html")
 )
 
+const screenSocket = io.of("/screen")
+
 io.of("/controllers").on("connection", function(socket) {
   const id = game.addPlayer()
+  screenSocket.emit("player-connection", id)
+
   socket.on("direction", msg => {
     game.setPlayerMov(id, msg)
   })
   socket.on("disconnect", socket => {
     game.removePlayer(id)
+    screenSocket.emit("player-disconnect", id)
+
     console.log(`player ${id} disconnected`)
   })
 })
 
-//screens
-const screenSocker = io.of("/screen")
-
 http.listen(3000, function() {
   console.log("listening on *:3000")
   setInterval(() => {
-    console.log("--")
     const data = game.update()
-    screenSocker.emit("update", data)
+    // console.log(data)
+    screenSocket.emit("update", data)
   }, 1000 / 30)
 })

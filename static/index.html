@@ -1,18 +1,51 @@
-<h1>controller</h1>
+<h1>screen</h1>
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"
   integrity="sha256-OgiHfllOBEOiWQ2OcBsDncRG2k7QBW9Rs1dB7MH2N2s="
   crossorigin="anonymous"
 ></script>
-
-<div class="buttons">
-  <button id="left">&lt;</button>
-  <button id="right">&gt;</button>
-</div>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.5/pixi.js"
+  integrity="sha256-0eTkgChezfAmPouD/lyy4guaGORPKB6rvS4sQa0SZkA="
+  crossorigin="anonymous"
+></script>
 
 <script>
   let direction = 0
-  var socket = io("/screen")
+  const socket = io("/screen")
 
-  socket.on("update", msg => console.log(msg))
+  const players = {}
+
+  let app = new PIXI.Application({ width: 800, height: 460 })
+  document.body.appendChild(app.view)
+
+  socket.on("player-connection", id => {
+    console.log("PLAYER CO NNECTION")
+
+    var rect = new PIXI.Graphics()
+    rect.beginFill(0xffff00)
+    rect.lineStyle(1, 0xff0000)
+    rect.drawRect(0, 0, 20, 20)
+    rect.endFill()
+    rect.y = 100
+    rect.x = -100
+
+    players[id] = rect
+
+    app.stage.addChild(rect)
+  })
+
+  socket.on("player-disconnect", id => {
+    console.log("PLAYER CO NNECTION")
+    app.stage.removeChild(players[id])
+    delete players[id]
+  })
+
+  socket.on("update", data => {
+    Object.entries(data.players).forEach(([id, p]) => {
+      try {
+        players[id].x = p.x
+      } catch (ex) {}
+    })
+  })
 </script>

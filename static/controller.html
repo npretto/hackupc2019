@@ -35,6 +35,11 @@
   document.querySelector("#left").addEventListener("mouseup", setnull)
   document.querySelector("#right").addEventListener("mousedown", setright)
   document.querySelector("#right").addEventListener("mouseup", setnull)
+
+  document.querySelector("#left").addEventListener("touchstart", setleft)
+  document.querySelector("#left").addEventListener("touchend", setnull)
+  document.querySelector("#right").addEventListener("touchstart", setright)
+  document.querySelector("#right").addEventListener("touchend", setnull)
 </script>
 
 <style>
