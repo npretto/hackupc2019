@@ -141,10 +141,11 @@
     fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
 
     this.socket = io("/screen")
-    this.socket.on("player-connection", id => {
+    this.socket.on("player-connection", ({ id, color }) => {
       console.log("PLAYER CONNECTION")
       players[id] = playersGroup.create(100 + Math.random() * 500, 500, "ship")
       players[id].anchor.setTo(0.5, 0.5)
+      players[id].tint = color
       game.physics.enable(players[id], Phaser.Physics.ARCADE)
     })
 

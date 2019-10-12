@@ -2,17 +2,19 @@ const express = require("express")
 const app = express()
 const http = require("http").createServer(app)
 const io = require("socket.io")(http)
-const path = require('path')
+const path = require("path")
 // const Game = require("./src/game.js").Game
 // const game = new Game()
 
-app.use(express.static(path.join(__dirname, 'static')))
+app.use(express.static(path.join(__dirname, "static")))
 
 const screenSocket = io.of("/screen")
 
 io.of("/controllers").on("connection", function(socket) {
   const id = uuidv4()
-  screenSocket.emit("player-connection", id)
+  const color = Math.random() * 0xffffff
+  socket.emit("color", "#" + (color << 0).toString(16))
+  screenSocket.emit("player-connection", { id, color })
   console.log("controller connected")
   socket.on("direction", direction => {
     console.log("controller direction")

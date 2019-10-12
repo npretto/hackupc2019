@@ -1,6 +1,11 @@
 let direction = 0
 var socket = io("/controllers")
 
+socket.on("color", color => {
+  console.log(color)
+  document.body.style.backgroundColor = color
+})
+
 function setleft() {
   direction = -1
   send()
