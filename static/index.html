@@ -1,3 +1,8 @@
+<canvas
+  id="qr"
+  style="position: fixed; top:0px; right:0px; width:200px; height:200px"
+></canvas>
+
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"
   integrity="sha256-OgiHfllOBEOiWQ2OcBsDncRG2k7QBW9Rs1dB7MH2N2s="
@@ -8,6 +13,8 @@
   integrity="sha256-0eTkgChezfAmPouD/lyy4guaGORPKB6rvS4sQa0SZkA="
   crossorigin="anonymous"
 ></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 
 <script
   src="https://cdnjs.cloudflare.com/ajax/libs/phaser-ce/2.13.3/phaser.min.js"
@@ -242,18 +249,22 @@
       fire()
 
       //  Run collision
-      try{
-        game.physics.arcade.overlap(bullets, aliens, collisionHandler, null, this)
+      try {
+        game.physics.arcade.overlap(
+          bullets,
+          aliens,
+          collisionHandler,
+          null,
+          this
+        )
         game.physics.arcade.overlap(
           bullets,
           boss_group,
           collisionHandlerBoss,
           null,
           this
-      )}catch(err){
-        
-      }
-      
+        )
+      } catch (err) {}
     }
   }
 
@@ -269,7 +280,6 @@
     //  When a bullet hits an alien we kill them both
     alien.life -= bullet.penetration
     bullet.kill()
-    
 
     //  Increase the score
     score += 20
@@ -280,34 +290,30 @@
     explosion.reset(alien.body.x, alien.body.y)
     explosion.play("kaboom", 30, false, true)
 
-    if (alien.life <= 0){
-
+    if (alien.life <= 0) {
       alien.kill()
 
-    if (aliens.countLiving() == 0) {
-      score += 1000
-      scoreText.text = scoreString + score
+      if (aliens.countLiving() == 0) {
+        score += 1000
+        scoreText.text = scoreString + score
 
-      enemyBullets.callAll("kill", this)
-      //stateText.text = " You Won, \n Click to restart"
-      //stateText.visible = true
+        enemyBullets.callAll("kill", this)
+        //stateText.text = " You Won, \n Click to restart"
+        //stateText.visible = true
 
-      //the "click to restart" handler
-      //game.input.onTap.addOnce(restart, this)
+        //the "click to restart" handler
+        //game.input.onTap.addOnce(restart, this)
 
-      game_phase += 1
+        game_phase += 1
 
-      if (game_phase%5 == 0) {
-        createFinalBoss()
-      } else {
-        bullets.killAll()
-        createAliens()
+        if (game_phase % 5 == 0) {
+          createFinalBoss()
+        } else {
+          bullets.killAll()
+          createAliens()
+        }
       }
     }
-
-    }
-
-    
   }
 
   function collisionHandlerBoss(bullet, boss) {
@@ -337,10 +343,9 @@
       //the "click to restart" handler
       //game.input.onTap.addOnce(restart, this)
 
-      bossLife = 50*game_phase/2
+      bossLife = (50 * game_phase) / 2
       game_phase += 1
       createAliens()
-      
     }
   }
 
@@ -436,17 +441,20 @@
             }
             if (c.length > 1) {
               bullet.tint = 0xff0000
-              bullet.penetration = c.length*(1+1/(Object.keys(players).length))
+              bullet.penetration =
+                c.length * (1 + 1 / Object.keys(players).length)
             }
             if (c.length > 2) {
               bullet.tint = 0xfff000
-              bullet.penetration = c.length*(1+1/(Object.keys(players).length))
+              bullet.penetration =
+                c.length * (1 + 1 / Object.keys(players).length)
             }
             if (c.length > 3) {
               bullet.loadTexture("banana")
               bullet.tint = 0xffffff
               bullet.scale.setTo(1, 1)
-              bullet.penetration = c.length*(1+1/(Object.keys(players).length))
+              bullet.penetration =
+                c.length * (1 + 1 / Object.keys(players).length)
             } else {
               bullet.loadTexture("bullet")
               bullet.penetration = 1
@@ -478,4 +486,9 @@
     //hides the text
     stateText.visible = false
   }
+
+  var qr = new QRious({
+    element: document.getElementById("qr"),
+    value: window.location + "controller.html"
+  })
 </script>
