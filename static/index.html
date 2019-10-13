@@ -53,8 +53,9 @@
       game.load.image("banana", "assets/banana.png")
       game.load.image("enemyBullet", "assets/enemy-bullet.png")
       game.load.spritesheet("invader", "assets/biene_minion.png", 32, 32)
-      game.load.image("banana_boss", "assets/banana.png")
+      game.load.image("brianair_boss", "assets/brianair.png")
       game.load.image("ship", "assets/clo.png")
+      game.load.spritesheet("heart_boom", "assets/heart_explosion.png", 128, 128)
       game.load.spritesheet("kaboom", "assets/explode.png", 128, 128)
       game.load.image("clouds", "assets/clouds.png")
       game.load.image("background", "assets/games/starstruck/background2.png")
@@ -161,10 +162,15 @@
     }
     */
 
+      //  An heart-xplosion pool
+      heart_xplosions = game.add.group()
+      heart_xplosions.createMultiple(30, "heart_boom")
+      heart_xplosions.forEach(setupInvaderHeart, this)
+
       //  An explosion pool
       explosions = game.add.group()
       explosions.createMultiple(30, "kaboom")
-      explosions.forEach(setupInvader, this)
+      explosions.forEach(setupInvaderKaboom, this)
 
       //  And some controls to play the game with
       cursors = game.input.keyboard.createCursorKeys()
@@ -237,7 +243,9 @@
     }
 
     function createFinalBoss() {
-      var boss = boss_group.create(100, 50, "banana_boss")
+
+
+      var boss = boss_group.create(100, 50, "brianair_boss")
       boss.anchor.setTo(0.5, 0.5)
       //alien.animations.add("fly", [0, 1], 20, true)
       //alien.play("fly")
@@ -247,15 +255,30 @@
       boss_group.y = 50
 
       //  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
-      tween = game.add
-        .tween(boss_group)
-        .to({ x: 600 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true)
+        tween = game.add
+          .tween(boss_group)
+          .to(
+            { x: window_width - window_width * 0.2 - aliens.x },
+            3500,
+            Phaser.Easing.Linear.None,
+            true,
+            0,
+            99999,
+            true
+          )
+
 
       //  When the tween loops it calls descend
       tween.onRepeat.add(descendBoss, this)
     }
 
-    function setupInvader(invader) {
+    function setupInvaderHeart(invader) {
+      invader.anchor.x = 0.5
+      invader.anchor.y = 0.5
+      invader.animations.add("heart_boom")
+    }
+
+    function setupInvaderKaboom(invader) {
       invader.anchor.x = 0.5
       invader.anchor.y = 0.5
       invader.animations.add("kaboom")
@@ -347,9 +370,9 @@
       scoreText.text = scoreString + score
 
       //  And create an explosion :)
-      var explosion = explosions.getFirstExists(false)
-      explosion.reset(alien.body.x, alien.body.y)
-      explosion.play("kaboom", 30, false, true)
+      var heart_xplosion = heart_xplosions.getFirstExists(false)
+      heart_xplosion.reset(alien.body.x, alien.body.y)
+      heart_xplosion.play("heart_boom", 30, false, true)
 
       if (alien.life <= 0) {
         alien.kill()
@@ -380,6 +403,8 @@
     function collisionHandlerBoss(bullet, boss) {
       //  When a bullet hits an alien we kill them both
       bossLife -= bullet.penetration
+      coll_x = bullet.x
+      coll_y = bullet.y
       bullet.kill()
 
       //  Increase the score
@@ -388,7 +413,7 @@
 
       //  And create an explosion :)
       var explosion = explosions.getFirstExists(false)
-      explosion.reset(boss.body.x, boss.body.y + 80)
+      explosion.reset(coll_x, coll_y - 80)
       explosion.play("kaboom", 30, false, true)
 
       if (bossLife <= 0) {
