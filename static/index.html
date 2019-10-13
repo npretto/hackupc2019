@@ -230,7 +230,7 @@
           Phaser.Easing.Linear.None,
           true,
           0,
-          -1,
+          99999,
           true
         )
 
@@ -271,6 +271,7 @@
     }
 
     function descend() {
+      console.log("pd")
       if (Object.keys(players).length > 0) {
         aliens.y += 10
       }
@@ -310,18 +311,21 @@
         } catch (err) {}
 
         // GAME OVER
-        if (aliens.y + 250 > window_height - 50) {
-          scoreText.text = scoreString + score
+        for (var i = 0, len = aliens.children.length; i < len; i++) {
+          if (aliens.children[i].worldPosition.y > window_height) {
+            scoreText.text = scoreString + score
 
-          enemyBullets.removeAll()
-          aliens.removeAll()
-          stateText.text = " Game over "
-          stateText.visible = true
+            enemyBullets.removeAll()
+            aliens.removeAll()
+            stateText.text = " Game over "
+            stateText.visible = true
 
-          is_game_over = true
+            is_game_over = true
 
-          //the "click to restart" handler
-          game.input.onTap.addOnce(restart, this)
+            //the "click to restart" handler
+            game.input.onTap.addOnce(restart, this)
+            break
+          }
         }
       }
     }
@@ -534,8 +538,6 @@
     }
 
     function restart() {
-      if (tween) tween.remove()
-
       //  A new level starts
       is_game_over = false
 
