@@ -390,7 +390,7 @@
 
           game_phase += 1
 
-          if (game_phase % 5 == 0) {
+          if (game_phase % 3 == 0) {
             createFinalBoss()
           } else {
             bullets.killAll()
@@ -428,7 +428,7 @@
         //the "click to restart" handler
         //game.input.onTap.addOnce(restart, this)
 
-        bossLife = (50 * game_phase) / 2
+        bossLife = (50 * game_phase)
         game_phase += 1
         createAliens()
       }
