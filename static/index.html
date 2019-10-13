@@ -213,7 +213,7 @@
           alien.animations.add("fly", [0, 1, 2, 3], 20, true)
           alien.play("fly")
           alien.body.moves = false
-          alien.life = game_phase*0.5 + 1
+          alien.life = game_phase * 0.5 + 1
         }
       }
 
@@ -221,7 +221,7 @@
       aliens.y = 100
 
       //  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
-      if (tween) tween.remove()
+      if (tween && tween.target) tween.remove()
       tween = game.add
         .tween(aliens)
         .to(
@@ -235,9 +235,7 @@
         )
 
       //  When the tween loops it calls descend
-      if (game_phase > 0) {
-        tween.onRepeat.add(descend, this)
-      }
+      tween.onRepeat.add(descend, this)
     }
 
     function createFinalBoss() {
