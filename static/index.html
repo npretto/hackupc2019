@@ -5,13 +5,9 @@
   <div id="phaser-container"></div>
   <div id="white-bar" style="background-color: #ffd000">
     <canvas id="qr" style="width:150px; height:150px"></canvas>
-    <img src="assets/scan-qr.png" class="scan-qr">
+    <img src="assets/scan-qr.png" class="scan-qr" />
 
-    <img src="assets/thankyou.png" class="thankyou">
-
-
-
-
+    <img src="assets/thankyou.png" class="thankyou" />
   </div>
 
   <script
@@ -272,7 +268,6 @@
     }
 
     function descend() {
-      console.log("pd")
       if (Object.keys(players).length > 0) {
         aliens.y += 10
       }
@@ -281,6 +276,10 @@
     function update() {
       //  Scroll the background
       clouds.tilePosition.y += 2
+
+      Object.values(players).forEach(p => {
+        p.x = Math.min(Math.max(p.x, 20), window_width - 20)
+      })
 
       if (true) {
         //  Reset the player, then check for movement keys
