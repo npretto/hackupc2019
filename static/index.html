@@ -253,7 +253,6 @@
       boss_group.y = 50
 
       //  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
-      if (tween) tween.remove()
       tween = game.add
         .tween(boss_group)
         .to({ x: 600 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true)
