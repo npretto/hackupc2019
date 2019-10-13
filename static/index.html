@@ -173,7 +173,7 @@
       this.socket.on("player-connection", ({ id, color }) => {
         console.log("PLAYER CONNECTION")
         players[id] = playersGroup.create(
-          50 + Math.random() * window_width,
+          50 + Math.random() * (window_width - 100),
           window_height - 50,
           "ship"
         )
