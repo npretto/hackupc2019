@@ -83,6 +83,7 @@
     var aliensLife = 1
     var game_phase = 0
     var is_game_over = false
+    var tween
 
     function create() {
       game.physics.startSystem(Phaser.Physics.ARCADE)
@@ -220,15 +221,16 @@
       aliens.y = 100
 
       //  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
-      var tween = game.add
+      if (tween) tween.remove()
+      tween = game.add
         .tween(aliens)
         .to(
           { x: window_width - window_width * 0.8 - aliens.x },
-          window_width * 0.6,
+          1500,
           Phaser.Easing.Linear.None,
           true,
           0,
-          1000,
+          -1,
           true
         )
 
@@ -249,7 +251,8 @@
       boss_group.y = 50
 
       //  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
-      var tween = game.add
+      if (tween) tween.remove()
+      tween = game.add
         .tween(boss_group)
         .to({ x: 600 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true)
 
@@ -531,6 +534,8 @@
     }
 
     function restart() {
+      if (tween) tween.remove()
+
       //  A new level starts
       is_game_over = false
 
