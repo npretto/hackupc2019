@@ -15,9 +15,7 @@ io.of("/controllers").on("connection", function(socket) {
   const color = Math.random() * 0xffffff
   socket.emit("color", "#" + (color << 0).toString(16))
   screenSocket.emit("player-connection", { id, color })
-  console.log("controller connected")
   socket.on("direction", direction => {
-    console.log("controller direction")
 
     screenSocket.emit("direction", { id, direction })
   })

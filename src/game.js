@@ -9,7 +9,6 @@ class Game {
   }
 
   addPlayer() {
-    console.log("adding new player")
     const id = uuidv4()
     this.players[id] = { x: 100 + Math.random() * 200, direction: 0 }
     return id
@@ -25,8 +24,6 @@ class Game {
 
   update() {
     Object.entries(this.players).forEach(([id, p]) => {
-      console.log(p, p.direction)
-      console.log(Game.PLAYER_SPEED)
       p.x += p.direction * Game.PLAYER_SPEED
     })
 
